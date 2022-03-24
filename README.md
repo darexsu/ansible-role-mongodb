@@ -180,6 +180,21 @@ Your vars [host_vars]  -->  default vars [current role] --> default vars [includ
       src: "mongod_conf_{{ ansible_os_family }}.j2"
       backup: true
       data: |
+        systemLog:
+          destination: file
+          logAppend: true
+          path: /var/log/mongodb/mongod.log
+        storage:
+          dbPath: /var/lib/mongo
+          journal:
+            enabled: true
+        processManagement:
+          fork: true  # fork and run in background
+          pidFilePath: /var/run/mongodb/mongod.pid  # location of pidfile
+          timeZoneInfo: /usr/share/zoneinfo
+        net:
+          port: 27017
+          bindIp: 127.0.0.1
 
   tasks:
     - name: role darexsu.mongodb
@@ -205,13 +220,6 @@ Your vars [host_vars]  -->  default vars [current role] --> default vars [includ
     mongodb_install:
       enabled: true
       packages: ["mongodb-org"]
-    # MongoDB -> config
-    mongodb_config:
-      enabled: true
-      file: "mongod.conf"
-      src: "mongod_conf_{{ ansible_os_family }}.j2"
-      backup: true
-      data: |
 
   tasks:
     - name: role darexsu.mongodb
