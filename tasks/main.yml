@@ -1,0 +1,39 @@
+---
+- name: merge dictionaries
+  block:
+    - include_vars:
+        file: ../../darexsu.mongodb/defaults/main.yml
+        name: mongodb_default_vars
+
+    - name: merge default and new dictionaries
+      set_fact:
+        "{{ item.key }}": "{{ mongodb_default_vars[item.key] | combine(merge[item.key], recursive=True)}}"
+      when: mongodb_default_vars[item.key] is defined
+      with_dict: "{{ merge }}"
+
+    - name: combine defaults vars with merge dictionary
+      set_fact:
+        merge: "{{ mongodb_default_vars | combine(merge, recursive=True)}}"
+  when: merge is defined
+
+- name: mongodb role is disabled
+  meta: end_play
+  when: not mongodb.enabled
+
+- name: "-> 01_MongoDB_install_{{ ansible_os_family }}.yml"
+  include_tasks: "./tasks/01_MongoDB_install_{{ ansible_os_family }}.yml"
+  when: mongodb_install.enabled
+
+- name: service facts
+  ansible.builtin.service_facts:
+
+- name: "-> 02_MongoDB_config.yml"
+  include_tasks: "./tasks/02_MongoDB_config.yml"
+  when: mongodb_config.enabled and ansible_facts.services is search("mongod")
+
+- name: "ensure mongodb is {{ mongodb['service']['state'] }}"
+  ansible.builtin.service:
+    name: mongod
+    state: "{{ mongodb['service']['state'] }}"
+    enabled: "{{ mongodb['service']['enabled'] }}"
+  when: ansible_facts.services is search("mongod")

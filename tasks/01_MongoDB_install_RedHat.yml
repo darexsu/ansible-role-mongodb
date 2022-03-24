@@ -1,0 +1,33 @@
+---
+- name: ensure dependencies are installed.
+  ansible.builtin.package:
+    name: "{{ mongodb_const['RedHat']['dependencies'] }}"
+    state: present
+
+- name: add mongodb repo for redhat
+  block:
+    - name: import mongodb gpg key
+      ansible.builtin.rpm_key:
+        key: "{{ mongodb_const['RedHat']['mongodb_gpg'] }}"
+        state: present
+
+    - name: add mongodb repository
+      ansible.builtin.yum_repository:
+        name: mongodb
+        description: mongodb YUM repo
+        baseurl: "{{ mongodb_const['RedHat']['mongodb_repo'] }}"
+        gpgcheck: true
+        enabled: true
+        module_hotfixes: true
+  when: mongodb.repo == "mongodb"
+
+- name: install mongodb packages.
+  ansible.builtin.package:
+    name: "{{ mongodb_install.packages }}"
+    state: present
+    update_cache: true
+  ignore_errors: true
+
+- name: force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: true

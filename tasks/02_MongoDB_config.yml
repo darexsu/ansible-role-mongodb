@@ -1,0 +1,11 @@
+---
+- name: configure mongodb_config
+  ansible.builtin.template:
+    src: "{{ mongodb_config.src }}"
+    dest: "/etc/{{ mongodb_config.file }}"
+    owner: root
+    group: root
+    mode: 0644
+    backup: "{{ mongodb_config.backup }}"
+  notify: restart mongod
+  when: mongodb_config.enabled

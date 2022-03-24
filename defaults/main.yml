@@ -1,0 +1,35 @@
+---
+# MongoDB
+mongodb:
+  enabled: false
+  version: "5.0"
+  repo: "mongodb"
+  service:
+    enabled: true
+    state: "started"
+
+# MongoDB -> install
+mongodb_install:
+  enabled: false
+  packages: ["mongodb-org"]
+
+# MongoDB -> config
+mongodb_config:
+  enabled: false
+  file: "mongod.conf"
+  src: "mongod_conf_{{ ansible_os_family }}.j2"
+  backup: false
+  data: |
+
+# MongoDB -> constants
+mongodb_const:
+  RedHat:
+    dependencies: [gnupg, python3-pymongo]
+    mongodb_repo: "https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/{{ mongodb.version }}/x86_64/"
+    mongodb_gpg: "https://www.mongodb.org/static/pgp/server-{{ mongodb.version }}.asc"
+  Debian:
+    dependencies: [apt-transport-https, ca-certificates, gnupg2, python3-pymongo]
+    mongodb_repo: "deb http://repo.mongodb.org/apt/{{ ansible_distribution | lower }} {{ ansible_distribution_release | replace('bullseye','buster') }}/mongodb-org/{{ mongodb.version }} main"
+    mongodb_gpg: "https://www.mongodb.org/static/pgp/server-{{ mongodb.version }}.asc"
+  Ubuntu:
+    mongodb_repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/{{ ansible_distribution | lower }} {{ ansible_distribution_release }}/mongodb-org/{{ mongodb.version }} multiverse"

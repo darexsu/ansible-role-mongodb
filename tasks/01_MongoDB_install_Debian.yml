@@ -1,0 +1,30 @@
+---
+- name: ensure dependencies are installed.
+  ansible.builtin.apt:
+    name: "{{ mongodb_const['Debian']['dependencies'] }}"
+    state: present
+    update_cache: true
+
+- name: add mongodb repo
+  block:
+    - name: add gpg key
+      ansible.builtin.apt_key:
+        url: "{{ mongodb_const['Debian']['mongodb_gpg'] }}"
+        state: present
+
+    - name: add mongodb repo
+      ansible.builtin.apt_repository:
+        repo: "{{ mongodb_const[ansible_distribution]['mongodb_repo'] }}"
+        state: present
+  when: mongodb.repo == "mongodb"
+
+- name: install mongodb packages
+  ansible.builtin.apt:
+    name: "{{ mongodb_install.packages }}"
+    state: present
+    update_cache: true
+  ignore_errors: true
+
+- name: force systemd to reread configs
+  ansible.builtin.systemd:
+    daemon_reload: true
