@@ -1,7 +1,7 @@
 ---
 - name: ensure dependencies are installed.
   ansible.builtin.apt:
-    name: "{{ mongodb_const['Debian']['dependencies'] }}"
+    name: "{{ mongodb_const[ansible_os_family]['dependencies'] }}"
     state: present
     update_cache: true
 
@@ -9,7 +9,7 @@
   block:
     - name: add gpg key
       ansible.builtin.apt_key:
-        url: "{{ mongodb_const['Debian']['mongodb_gpg'] }}"
+        url: "{{ mongodb_const[ansible_os_family]['mongodb_gpg'] }}"
         state: present
 
     - name: add mongodb repo
@@ -20,7 +20,7 @@
 
 - name: install mongodb packages
   ansible.builtin.apt:
-    name: "{{ mongodb_install.packages }}"
+    name: "{{ mongodb_const[ansible_os_family]['packages'] }}"
     state: present
     update_cache: true
   ignore_errors: true

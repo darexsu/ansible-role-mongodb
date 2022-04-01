@@ -7,11 +7,11 @@
       - [install](#install)
       - [merge behaviour](#merge-behaviour)
   - Playbooks (merge version):
-      - [install and configure: MongoDB](#install-and-configure-mongodb-merge-version)
+      - [install and configure: MongoDB v5.0](#install-and-configure-mongodb-merge-version)
           - [install: MongoDB](#install-mongodb-merge-version)
           - [configure: MongoDB](#configure-mongodb-merge-version)
   - Playbooks (full version):
-      - [install and configure: MongoDB](#install-and-configure-mongodb-full-version)
+      - [install and configure: MongoDB v5.0](#install-and-configure-mongodb-full-version)
           - [install: MongoDB](#install-mongodb-full-version)
           - [configure: MongoDB](#configure-mongodb-full-version)
 
@@ -172,7 +172,6 @@ Your vars [host_vars]  -->  default vars [current role] --> default vars [includ
     # MongoDB -> install
     mongodb_install:
       enabled: true
-      packages: ["mongodb-org"]
     # MongoDB -> config
     mongodb_config:
       enabled: true
@@ -219,7 +218,6 @@ Your vars [host_vars]  -->  default vars [current role] --> default vars [includ
     # MongoDB -> install
     mongodb_install:
       enabled: true
-      packages: ["mongodb-org"]
 
   tasks:
     - name: role darexsu.mongodb

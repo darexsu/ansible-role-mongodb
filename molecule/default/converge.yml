@@ -22,7 +22,6 @@
       # MongoDB -> install
       mongodb_install:
         enabled: true
-        packages: ["mongodb-org"]
       # MongoDB -> config
       mongodb_config:
         enabled: true
